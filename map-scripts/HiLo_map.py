@@ -64,7 +64,7 @@ def HiLo_thickness_map(data,
     time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings = gfs.get_time_string(data,time_index)
     #time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings = get_time_string()
     
-    ax.set_title('GFS 0.5$^{o}$\n500hPa Heights (m) and PVU (hPa)', 
+    ax.set_title('GFS 0.5$^{o}$\nMSLP (mb) and 2m Winds (m/s)', 
     size=10, loc='left',fontdict=title_font)
     
     ax.set_title(f"Init Hour: {init_date} {init_hour}\nForecast Hour: {forecast_date} {forecast_hour}",
@@ -140,7 +140,7 @@ def HiLo_thickness_map(data,
         hght_1000 = self.data.variables['Geopotential_height_isobaric'][self.time_strings.index(time), plev.index(1000)]
         hght_500 = self.data.variables['Geopotential_height_isobaric'][self.time_strings.index(time), plev.index(500)]
         # Calculate and smooth 1000-500 hPa thickness
-        thickness_1000_500 = gaussian_filter(hght_500 - hght_1000, sigma=3.0)
+        thickness _1000_500 = gaussian_filter(hght_500 - hght_1000, sigma=3.0)
         # Plot thickness with multiple colors
         clevs = (np.arange(0, 5400, 60),
          np.array([5400]),
