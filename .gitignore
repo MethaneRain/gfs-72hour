@@ -1,6 +1,7 @@
 # Ignore Mac system files
 .DS_store
 
+# Ignore the pycaches for Python
 map-scripts/__pycache__/
 
 __pycache__/
