@@ -103,7 +103,9 @@ class GFS_72hour_Maps:
         self.upflux_rad_name = "Upward_Long-Wave_Radp_Flux_atmosphere_top_Mixed_intervals_Average"
         self.u_name = 'u-component_of_wind_isobaric'
         self.v_name = 'v-component_of_wind_isobaric'
-        #return
+        
+        self.query_list = [self.mslp_name,self.u_src_name,self.v_src_name]
+        
         # Set the title font 
         self.title_font = {'family': 'serif',
         'color':  'black',
@@ -130,10 +132,11 @@ class GFS_72hour_Maps:
         print("-----------------------------------------\n"\
               +"Sit back....\n"\
               +"-----------------------------------------\n")
-        #query.variables(mslp_name,).add_lonlat(True)
-        
-        query.variables(vort_name,hgt_name,pv_press_name,mslp_name,upflux_rad_name,u_name,v_name,
-                       u_src_name,v_src_name,sfc_gust_name).add_lonlat(True)
+        #query.variables(str(self.query_list)).add_lonlat(True)
+        for i in self.query_list:
+            query.variables(i) 
+        #query.variables(vort_name,hgt_name,pv_press_name,mslp_name,upflux_rad_name,u_name,v_name,
+        #               u_src_name,v_src_name,sfc_gust_name).add_lonlat(True)
         print("\ndone qeueing data...\n\ngrabbing data...\n")  
             
         # Request data for the variables you want to use
@@ -162,11 +165,11 @@ class GFS_72hour_Maps:
         #---------------------------------------------------------------------------------------------------
         
         # Get time into a datetime object
-        time_var = data.variables[find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
+        time_var = data.variables[self.find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
         time_var = num2date(time_var[:], time_var.units).tolist()
         time_strings = [t.strftime('%m/%d %H:%M') for t in time_var]
             
-        time_var = data.variables[find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
+        time_var = data.variables[self.find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
         time_final = num2date(time_var[:].squeeze(), time_var.units)
         
         # Time index for data variables
