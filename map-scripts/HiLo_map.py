@@ -6,7 +6,8 @@ Created on Thu Oct  1 00:30:10 2020
 @author: chowdahead
 """
 
-def HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,title_font,make_map):
+def HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,title_font,make_map,
+                       lons,lats,mslp):
     '''
     Method to plot the 500mb heights and absolute vorticity
     -------------------------------------------------------
@@ -38,12 +39,12 @@ def HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,title_font
     kw_clabels = {'fontsize': 11, 'inline': True, 'inline_spacing': 5, 'fmt': '%i',
     'rightside_up': True, 'use_clabeltext': True}
     
-    fig,ax = make_map
+    fig,ax = make_map()
     
     # Plot Title
     #---------------------------------------------------------------------------------------------------
     
-    time,file_time,forecast_date,forecast_hour,init_date,init_hour = get_time_string
+    time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings = get_time_string()
     ax.set_title('GFS 0.5$^{o}$\n500hPa Heights (m) and PVU (hPa)', 
     size=10, loc='left',fontdict=title_font)
     
@@ -58,14 +59,14 @@ def HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,title_font
     #print(u_sfc.shape)
     #v_sfc = self.data.variables[self.v_src_name][self.time_strings.index(time),0] * units('m/s')
     
-    '''
+    
     # Grab pressure levels
-    plev = list(self.data.variables['isobaric'][:])
+    #plev = list(self.data.variables['isobaric'][:])
         
     # Plot MSLP
     clevmslp = np.arange(800., 1120., 4)
-    mslp_smooth = gaussian_filter(self.mslp[self.time_strings.index(time),:,:],sigma=3.0)
-    cs2 = ax.contour(self.lons, self.lats, mslp_smooth/100., clevmslp, colors='k', linewidths=1.25,
+    mslp_smooth = gaussian_filter(mslp[time_strings.index(time),:,:],sigma=3.0)
+    cs2 = ax.contour(lons, lats, mslp_smooth/100., clevmslp, colors='k', linewidths=1.25,
      linestyles='solid', transform=ccrs.PlateCarree())
     clbls = plt.clabel(cs2, **kw_clabels)
     plt.setp(clbls, path_effects=[
@@ -75,7 +76,7 @@ def HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,title_font
     #plot_maxmin_points(ax,self.lon_2d, self.lat_2d, mslp_smooth/100., 'max', 50, symbol='H', color='b',  transform=ccrs.PlateCarree())
     #plot_maxmin_points(ax,self.lon_2d, self.lat_2d, mslp_smooth/100., 'min', 25, symbol='L', color='r', transform=ccrs.PlateCarree())
     
-    
+    '''
     lon_slice = slice(None, None, 15)
     lat_slice = slice(None, None, 15)
     ax.barbs(self.lons[lon_slice], self.lats[lat_slice],
