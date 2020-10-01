@@ -94,7 +94,7 @@ class GFS_72hour_Maps:
         self.end = self.start + timedelta(hours=delta_t)
         self.extent = [-130,-60,20,60]
                 
-                
+        return
     
     def get_data(self):
         # Request the GFS data from the thredds server
@@ -213,45 +213,6 @@ class GFS_72hour_Maps:
         return fig,ax
 
 
-data = GFS_72hour_Maps.get_data()
-vort = data.variables[vort_name][:]
-hgt = data.variables[hgt_name][:]
-
-pv = data.variables[pv_press_name][:]
-mslp = data.variables[mslp_name][:]
-upflux_rad = data.variables[upflux_rad_name][:]
-
-u = data.variables[u_name][0] * units('m/s')
-v = data.variables[v_name][0] * units('m/s')
-lev_250 = np.where(data.variables['isobaric'][:] == 25000)[0][0]
-u_250 = data.variables[u_name][:, lev_250, :, :]
-v_250 = data.variables[v_name][:, lev_250, :, :]
-
-u_sfc = data.variables[u_src_name][:] * units('m/s')
-v_sfc = data.variables[v_src_name][:] * units('m/s')
-
-
-# Grab pressure levels
-plev = list(data.variables['isobaric'][:])
-# Grab pressure level data
-hght_1000 = data.variables['Geopotential_height_isobaric'][:, plev.index(1000)]
-hght_500 = data.variables['Geopotential_height_isobaric'][:, plev.index(500)]
-# Calculate and smooth 1000-500 hPa thickness
-thickness_1000_500 = gaussian_filter(hght_500 - hght_1000, sigma=3.0)
-
-# Pull out the lat and lon data
-lats = data.variables['lat'][:]
-lons = data.variables['lon'][:]
-    
-# Combine 1D latitude and longitudes into a 2D grid of locations
-# use this for the High/Low function 
-lon_2d, lat_2d = np.meshgrid(lons, lats)
-
-            
-os.chdir("map-scripts/")
-import HiLo_map as hilo
-hilo.HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,title_font,make_map,
-                       lons,lats,mslp)
 
 
     
