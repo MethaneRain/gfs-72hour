@@ -3,12 +3,23 @@
 """
 Created on Thu Oct  1 00:30:10 2020
 
-@author: chowdahead
+@author: Justin Richling
 """
 
-def HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,
-                       title_font,fig,ax,
-                       lons,lats,mslp):
+
+def get_time_strings(get_time_string):
+    time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings = get_time_string()
+    
+    return time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings
+def HiLo_thickness_map(data,
+                       time_index,
+          
+                       
+                       
+                       fig,
+                       ax,
+                       lons,
+                       lats):
     '''
     Method to plot the 500mb heights and absolute vorticity
     -------------------------------------------------------
@@ -31,6 +42,19 @@ def HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,
     
     from matplotlib import patheffects
     
+    # MetPy
+    from metpy.units import units
+    
+     
+    os.chdir("../")
+    from gfs_72h_quick import GFS_72hour_Maps
+    
+    gfs = GFS_72hour_Maps()
+    title_font = gfs.title_font
+    u_src_name = gfs.u_src_name
+    v_src_name = gfs.v_src_name
+    mslp_name = gfs.mslp_name
+    im_save_path = gfs.im_save_path
     
     # Setup Contour Label Options
     #---------------------------------------------------------------------------------------------------    
@@ -41,8 +65,9 @@ def HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,
     
     # Plot Title
     #---------------------------------------------------------------------------------------------------
+    time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings = gfs.get_time_strings()
+    #time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings = get_time_string()
     
-    time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings = get_time_string()
     ax.set_title('GFS 0.5$^{o}$\n500hPa Heights (m) and PVU (hPa)', 
     size=10, loc='left',fontdict=title_font)
     
@@ -52,16 +77,17 @@ def HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,
     ax.stock_img()
     # 250hPa Jet
     #---------------------------------------------------------------------------------------------------
-    
-    #u_sfc = self.data.variables[self.u_src_name][self.time_strings.index(time),0] * units('m/s')
-    #print(u_sfc.shape)
-    #v_sfc = self.data.variables[self.v_src_name][self.time_strings.index(time),0] * units('m/s')
+    data = gfs.get_data()
+    u_sfc = data.variables[u_src_name][time_strings.index(time),0] * units('m/s')
+    print(u_sfc.shape)
+    v_sfc = data.variables[v_src_name][time_strings.index(time),0] * units('m/s')
     
     
     # Grab pressure levels
     #plev = list(self.data.variables['isobaric'][:])
         
     # Plot MSLP
+    mslp = data.variable[mslp_name]
     clevmslp = np.arange(800., 1120., 4)
     mslp_smooth = gaussian_filter(mslp[time_strings.index(time),:,:],sigma=3.0)
     cs2 = ax.contour(lons, lats, mslp_smooth/100., clevmslp, colors='k', linewidths=1.25,

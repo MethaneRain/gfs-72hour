@@ -104,6 +104,12 @@ class GFS_72hour_Maps:
         self.u_name = 'u-component_of_wind_isobaric'
         self.v_name = 'v-component_of_wind_isobaric'
         #return
+        # Set the title font 
+        self.title_font = {'family': 'serif',
+        'color':  'black',
+        'weight': 'bold',
+        'size': 14,
+        }
     
     def get_data(self):
         # Request the GFS data from the thredds server
