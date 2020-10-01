@@ -1,0 +1,6 @@
+# Ignore Mac system files
+.DS_store
+
+map-scripts/__pycache__/
+
+__pycache__/
