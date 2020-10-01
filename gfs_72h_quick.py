@@ -93,8 +93,17 @@ class GFS_72hour_Maps:
         delta_t = 72
         self.end = self.start + timedelta(hours=delta_t)
         self.extent = [-130,-60,20,60]
-                
-        return
+        self.vort_name = "Absolute_vorticity_isobaric"
+        self.hgt_name = "Geopotential_height_isobaric"
+        self.u_src_name = "u-component_of_wind_height_above_ground"
+        self.v_src_name = "v-component_of_wind_height_above_ground"
+        self.sfc_gust_name = 'Wind_speed_gust_surface'
+        self.pv_press_name = "Pressure_potential_vorticity_surface"
+        self.mslp_name = "MSLP_Eta_model_reduction_msl"
+        self.upflux_rad_name = "Upward_Long-Wave_Radp_Flux_atmosphere_top_Mixed_intervals_Average"
+        self.u_name = 'u-component_of_wind_isobaric'
+        self.v_name = 'v-component_of_wind_isobaric'
+        #return
     
     def get_data(self):
         # Request the GFS data from the thredds server
@@ -108,15 +117,24 @@ class GFS_72hour_Maps:
         
         # query the data from the server
         query = ncss.query()
-        query.time_range(self.start, self.end)
+        query.time_range(self.start,self.end)
         query.lonlat_box(north=80, south=0, east=310, west=200)
         query.accept('netcdf4')
-        data = ncss.get_data(query)
+        
+        
+        query.variables(mslp_name,).add_lonlat(True)
+        
+        #query.variables(vort_name,hgt_name,pv_press_name,mslp_name,upflux_rad_name,u_name,v_name,
+        #               u_src_name,v_src_name,sfc_gust_name).add_lonlat(True)
+        print("\ndone queing data...\n\ngrabbing data...\n")  
+            
+        # Request data for the variables you want to use
+        self.data = ncss.get_data(query)
                 
-        return data
+        return self.data
     
     
-    def find_time_var(var, time_basename='time'):
+    def find_time_var(self,var, time_basename='time'):
         '''
         Thanks to the crew over at Metpy for this handy little function
         
@@ -131,16 +149,16 @@ class GFS_72hour_Maps:
     
         
      
-    def get_time_string(self,data,time_index):
+    def get_time_string(self,time_index):
         # File and Title Times
         #---------------------------------------------------------------------------------------------------
         
         # Get time into a datetime object
-        time_var = data.variables[self.find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
+        time_var = self.data.variables[self.find_time_var(self.data.variables["MSLP_Eta_model_reduction_msl"])]
         time_var = num2date(time_var[:], time_var.units).tolist()
         time_strings = [t.strftime('%m/%d %H:%M') for t in time_var]
             
-        time_var = data.variables[self.find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
+        time_var = self.data.variables[self.find_time_var(self.data.variables["MSLP_Eta_model_reduction_msl"])]
         time_final = num2date(time_var[:].squeeze(), time_var.units)
         
         # Time index for data variables
@@ -162,7 +180,7 @@ class GFS_72hour_Maps:
     
     
     
-    
+    @staticmethod
     def get_var_isobaric_num(data,var):
         '''
         thredds use different isobaric variable names depending on the variable,

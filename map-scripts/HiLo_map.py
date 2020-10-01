@@ -6,7 +6,7 @@ Created on Thu Oct  1 00:30:10 2020
 @author: chowdahead
 """
 
-def HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,title_font,make_map,
+def HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,title_font,fig,ax,
                        lons,lats,mslp):
     '''
     Method to plot the 500mb heights and absolute vorticity
@@ -36,7 +36,7 @@ def HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,title_font
     kw_clabels = {'fontsize': 11, 'inline': True, 'inline_spacing': 5, 'fmt': '%i',
     'rightside_up': True, 'use_clabeltext': True}
     
-    fig,ax = make_map()
+    #fig,ax = make_map()
     
     # Plot Title
     #---------------------------------------------------------------------------------------------------

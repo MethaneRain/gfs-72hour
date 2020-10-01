@@ -16,39 +16,30 @@ from metpy.units import units
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
-from gfs-72h-quick import GFS_72hour_Maps
-data = GFS_72hour_Maps.get_data()
+from gfs_72h_quick import GFS_72hour_Maps
 
-make_map = GFS_72hour_Maps.make_map()
+gfs = GFS_72hour_Maps()
 
+data = gfs.get_data()
 
-vort_name = "Absolute_vorticity_isobaric"
-hgt_name = "Geopotential_height_isobaric"
-u_src_name = "u-component_of_wind_height_above_ground"
-v_src_name = "v-component_of_wind_height_above_ground"
-sfc_gust_name = 'Wind_speed_gust_surface'
-pv_press_name = "Pressure_potential_vorticity_surface"
-mslp_name = "MSLP_Eta_model_reduction_msl"
-upflux_rad_name = "Upward_Long-Wave_Radp_Flux_atmosphere_top_Mixed_intervals_Average"
-u_name = 'u-component_of_wind_isobaric'
-v_name = 'v-component_of_wind_isobaric'
+fig,ax = gfs.make_map()
 
 
-vort = data.variables[vort_name][:]
-hgt = data.variables[hgt_name][:]
+vort = data.variables[gfs.vort_name][:]
+hgt = data.variables[gfs.hgt_name][:]
 
-pv = data.variables[pv_press_name][:]
-mslp = data.variables[mslp_name][:]
-upflux_rad = data.variables[upflux_rad_name][:]
+pv = data.variables[gfs.pv_press_name][:]
+mslp = data.variables[gfs.mslp_name][:]
+upflux_rad = data.variables[gfs.upflux_rad_name][:]
 
-u = data.variables[u_name][0] * units('m/s')
-v = data.variables[v_name][0] * units('m/s')
+u = data.variables[gfs.u_name][0] * units('m/s')
+v = data.variables[gfs.v_name][0] * units('m/s')
 lev_250 = np.where(data.variables['isobaric'][:] == 25000)[0][0]
-u_250 = data.variables[u_name][:, lev_250, :, :]
-v_250 = data.variables[v_name][:, lev_250, :, :]
+u_250 = data.variables[gfs.u_name][:, lev_250, :, :]
+v_250 = data.variables[gfs.v_name][:, lev_250, :, :]
 
-u_sfc = data.variables[u_src_name][:] * units('m/s')
-v_sfc = data.variables[v_src_name][:] * units('m/s')
+u_sfc = data.variables[gfs.u_src_name][:] * units('m/s')
+v_sfc = data.variables[gfs.v_src_name][:] * units('m/s')
 
 
 # Grab pressure levels
@@ -67,8 +58,12 @@ lons = data.variables['lon'][:]
 # use this for the High/Low function 
 lon_2d, lat_2d = np.meshgrid(lons, lats)
 
-            
+extent = gfs.extent     
+im_save_path = gfs.im_save_path
+#im_save_path = GFS_72hour_Maps.
+get_time_string = gfs.get_time_string(data)
+
+     
 os.chdir("map-scripts/")
 import HiLo_map as hilo
-hilo.HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,title_font,make_map,
-                       lons,lats,mslp)
+

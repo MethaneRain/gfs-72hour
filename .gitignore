@@ -2,3 +2,5 @@
 .DS_store
 
 map-scripts/__pycache__/
+
+__pycache__/
