@@ -66,4 +66,8 @@ get_time_string = gfs.get_time_string(data)
      
 os.chdir("map-scripts/")
 import HiLo_map as hilo
+hilo.HiLo_thickness_map(data,
+                       5,
+                       fig,
+                       ax)
 

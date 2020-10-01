@@ -13,13 +13,8 @@ def get_time_strings(get_time_string):
     return time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings
 def HiLo_thickness_map(data,
                        time_index,
-          
-                       
-                       
                        fig,
-                       ax,
-                       lons,
-                       lats):
+                       ax):
     '''
     Method to plot the 500mb heights and absolute vorticity
     -------------------------------------------------------
@@ -56,6 +51,10 @@ def HiLo_thickness_map(data,
     mslp_name = gfs.mslp_name
     im_save_path = gfs.im_save_path
     
+    
+    lons = data.variables["lons"][:]
+    lats = data.variables["lats"][:]
+    
     # Setup Contour Label Options
     #---------------------------------------------------------------------------------------------------    
     kw_clabels = {'fontsize': 11, 'inline': True, 'inline_spacing': 5, 'fmt': '%i',
@@ -77,7 +76,7 @@ def HiLo_thickness_map(data,
     ax.stock_img()
     # 250hPa Jet
     #---------------------------------------------------------------------------------------------------
-    data = gfs.get_data()
+   
     u_sfc = data.variables[u_src_name][time_strings.index(time),0] * units('m/s')
     print(u_sfc.shape)
     v_sfc = data.variables[v_src_name][time_strings.index(time),0] * units('m/s')
