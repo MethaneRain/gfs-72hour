@@ -16,10 +16,7 @@ def HiLo_thickness_map(time_index,extent,im_save_path,get_time_string,title_font
     '''
     thickness_plot=False
     import os
-    
-    # MetPy
-    from metpy.units import units
-    
+        
     # Numerical and Scientific Libraries
     import numpy as np
     from scipy.ndimage import gaussian_filter
