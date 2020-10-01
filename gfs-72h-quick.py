@@ -43,7 +43,7 @@ import warnings
 warnings.filterwarnings('ignore')
             
         
-class GFS_72hour_Maps:
+def GFS_72hour_Maps:
     '''
     Class to collect all my 72-hour GFS forecast maps. 
     
@@ -60,152 +60,7 @@ class GFS_72hour_Maps:
     * 
     '''
     
-    
 
-    
-    
-    def __init__(self):
-        '''
-        Default values
-        
-        * date -> current date
-        * initialization hour -> 0000Z
-        * image save path -> cwd
-        * countour levels -> 100
-        * extent -> CONUS
-        * contour color -> black
-        '''
-        
-        
-        
-        
-        self.vort_name = "Absolute_vorticity_isobaric"
-        self.hgt_name = "Geopotential_height_isobaric"
-        self.u_src_name = "u-component_of_wind_height_above_ground"
-        self.v_src_name = "v-component_of_wind_height_above_ground"
-        self.sfc_gust_name = 'Wind_speed_gust_surface'
-        self.pv_press_name = "Pressure_potential_vorticity_surface"
-        self.mslp_name = "MSLP_Eta_model_reduction_msl"
-        self.upflux_rad_name = "Upward_Long-Wave_Radp_Flux_atmosphere_top_Mixed_intervals_Average"
-        self.u_name = 'u-component_of_wind_isobaric'
-        self.v_name = 'v-component_of_wind_isobaric'
-        self.map_dict = {'vort':{"ax_title":'GFS 0.5$^{o}$\n500mb Heights (m) and Abs Vorticity '+ "("+"$\mathregular{s^{-1}}$"+")",
-                            "long_name":'Absolute_vorticity_isobaric',
-                            "save_path":"GFS/Vorticity/",
-                            "im_name":"GFS_0p5_Vort_Heights_500mb"},
-                    'mslp':{"ax_title":'GFS 0.5$^{o}$\nMean Sea Level Pressure (hPa)',
-                            "long_name":"MSLP_Eta_model_reduction_msl",
-                            "save_path":"GFS/MSLP/",
-                            "im_name":"GFS_0p5_mslp"},
-                    'jets':{"ax_title":'GFS 0.5$^{o}$\n500hPa Heights (m) and 250hPa Windspeed (m/s)',
-                            "long_name":"",
-                            "save_path":"GFS/Wind/",
-                            "im_name":"GFS_0p5_WindSpeed"},
-                    'pv':{"ax_title":"",
-                            "long_name":"",
-                            "save_path":"",
-                            "im_name":""},
-                }
-        
-        
-        
-        # Set the title font 
-        self.title_font = {'family': 'serif',
-        'color':  'black',
-        'weight': 'bold',
-        'size': 14,
-        }
-        self.now = datetime.utcnow()
-        self.now_start = datetime(self.now.year,self.now.month,self.now.day,0,0)
-        # define time range you want the data for
-        self.start = self.now_start
-        print(self.start)
-        self.delta_t = 72
-        self.end = self.now_start + timedelta(hours=self.delta_t)
-            
-        # Set a path to save the plots with string format for the date to set the month and day
-        self.im_save_path ="/path/to/saved/images/"
-        self.im_save_path =f"/Users/chowdahead/Desktop/Weather_Blog/{self.now.year}/{self.now.month}_{self.now.day}/"
-        print(self.im_save_path)
-            
-        # Check to see if the folder already exists, if not create it
-        if not os.path.isdir(self.im_save_path):
-            os.makedirs(self.im_save_path)
-            
-        # Uncomment if you want to automatically change to the map folder    
-        #os.chdir(im_save_path)
-        
-        # get current date and time
-        #now = forecast_times[0]
-        
-        # initialization hour for model forecast
-        self.init_hour = "0000"
-        
-        # current working drive for saved images
-        self.im_save_path = "./"
-        
-        # 
-        self.arg = ""
-        
-        # contour levels for plotting
-        self.clevs = 100
-        
-        # map lat/lon extent
-        self.extent = [-130., -70, 20., 60.]
-        # Set Projection of Data
-        self.datacrs = ccrs.PlateCarree()
-            
-        # Set Projection of Plot
-        self.plotcrs = ccrs.LambertConformal(central_latitude=[30, 60], central_longitude=-100)
-            
-        # Add Map Features
-        self.states_provinces = cfeature.NaturalEarthFeature(category='cultural',
-        name='admin_1_states_provinces_lakes',scale='50m', facecolor='none')
-            
-        self.country_borders = cfeature.NaturalEarthFeature(category='cultural',
-        name='admin_0_countries',scale='50m', facecolor='none')
-            
-        # Colorbar Axis Placement (under figure)
-        self.colorbar_axis = [0.183, 0.09, 0.659, 0.03] # [left, bottom, width, height]
-            
-         
-        
-        # plot contour line color
-        self.colors = "k"
-        
-        # Request the GFS data from the thredds server
-        gfs = TDSCatalog('https://thredds.ucar.edu/thredds/catalog/grib/NCEP/GFS/Global_0p25deg/catalog.xml')
-            
-        self.dataset = list(gfs.datasets.values())[1]
-        print(self.dataset.access_urls)
-            
-        # Create NCSS object to access the NetcdfSubset
-        self.ncss = NCSS(self.dataset.access_urls['NetcdfSubset'])
-        
-        # query the data from the server
-        self.query = self.ncss.query()
-        self.query.time_range(self.start, self.end)
-        self.north = 80
-        self.south = 0
-        self.east = 310
-        self.west = 200
-        self.Lat = self.query.lonlat_box(north=self.north, south=self.south, east=self.east, west=self.west)
-        
-        self.query.variables("MSLP_Eta_model_reduction_msl").add_lonlat(True)
-        # Request data for the variables you want to use
-        self.data_o = self.ncss.get_data(self.query)
-        #self.get_time_string(self,self.now.year,time_index)
-        
-        # Pull out the lat and lon data
-        self.lats = self.data_o.variables['lat'][:]
-        self.lons = self.data_o.variables['lon'][:]
-            
-        # Combine 1D latitude and longitudes into a 2D grid of locations
-        # use this for the High/Low function 
-        self.lon_2d, self.lat_2d = np.meshgrid(self.lons, self.lats)
-                
-        self.mslp = self.data_o.variables[self.mslp_name][:]
-                
     
     def find_time_var(self,var, time_basename='time'):
         '''
@@ -219,28 +74,7 @@ class GFS_72hour_Maps:
         raise ValueError('No time variable found for ' + var.name)
         
     
-    def get_variables(self,var_name_list):
-        '''
-        get and/or change dataset from thredds
-        
-        -------
-        Args:
-        * <em>list</em> of strings corresponding to variable names in THREDDS
-        
-        '''
-       
-        self.query = self.ncss.query()
-        for var in var_name_list:
-            self.query.variables(var).add_lonlat(True)
-        
-        print("\ndone queing data...\n\ngrabbing data...\n")  
-            
-        # Request data for the variables you want to use
-        self.data = self.ncss.get_data(self.query)
-        print(type(self.data))
-        print("done grabbing data...\n\ngrabbing variables and times...\n")
-        return self.data
-        # Get time into a datetime object
+    
         
      
     def get_time_string(self,time_index):
