@@ -16,8 +16,10 @@ from metpy.units import units
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
-import GFS_72hour_Maps
+from gfs-72h-quick import GFS_72hour_Maps
 data = GFS_72hour_Maps.get_data()
+
+make_map = GFS_72hour_Maps.make_map()
 
 
 vort_name = "Absolute_vorticity_isobaric"
