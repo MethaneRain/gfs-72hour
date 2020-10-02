@@ -128,7 +128,10 @@ def HiLo_thickness_map(data,
     HILO = im_save_path+"GFS/HiLo/"
     if not os.path.isdir(HILO):
         os.makedirs(HILO)
-        
+    
+    import datetime_diff as dt
+    dt.dt_diff.datetime_difference()    
+    
     time_index *= 3
     if time_index < 10:
         times = f"0{time_index}"

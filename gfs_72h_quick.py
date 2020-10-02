@@ -115,9 +115,9 @@ class GFS_72hour_Maps:
     
     def get_data(self):
         # Request the GFS data from the thredds server
-        gfs = TDSCatalog('https://thredds.ucar.edu/thredds/catalog/grib/NCEP/GFS/Global_0p25deg/catalog.xml')
+        gfs_cat = TDSCatalog('https://thredds.ucar.edu/thredds/catalog/grib/NCEP/GFS/Global_0p25deg/catalog.xml')
             
-        dataset = list(gfs.datasets.values())[1]
+        dataset = list(gfs_cat.datasets.values())[1]
         #print(dataset.access_urls)
             
         # Create NCSS object to access the NetcdfSubset
@@ -166,13 +166,13 @@ class GFS_72hour_Maps:
         '''
         # Get time into a datetime object
         time_var = data.variables[self.find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
-        time_var = num2date(time_var[:], time_var.units).tolist()
-        self.time_strings = [t.strftime('%m/%d %H:%M') for t in time_var]
+        self.time_var = num2date(time_var[:], time_var.units).tolist()
+        self.time_strings = [t.strftime('%m/%d %H:%M') for t in self.time_var]
             
         time_var = data.variables[self.find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
         self.time_final = num2date(time_var[:].squeeze(), time_var.units)
         
-        return self.time_strings,self.time_final
+        return self.time_strings,self.time_final,self.time_var
         
     def get_time_string(self,data,time_index):
         '''
