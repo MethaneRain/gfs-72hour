@@ -61,7 +61,7 @@ def HiLo_thickness_map(data,
     
     # Plot Title
     #---------------------------------------------------------------------------------------------------
-    time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings = gfs.get_time_string(data,time_index)
+    time,file_time,forecast_date,forecast_hour,init_date,init_hour = gfs.get_time_string(data,time_index)
     #time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings = get_time_string()
     
     ax.set_title('GFS 0.5$^{o}$\nMSLP (mb) and 2m Winds (m/s)', 

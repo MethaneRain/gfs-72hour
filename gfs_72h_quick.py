@@ -75,7 +75,7 @@ class GFS_72hour_Maps:
 
 
         self.now = datetime.utcnow()
-        self.im_save_path =f"/Users/chowdahead/Desktop/Weather_Blog/{self.now.year}/{self.now.month}_{self.now.day}/"
+        self.im_save_path =f"{self.now.year}/{self.now.month}_{self.now.day}/"
         print(self.im_save_path)
             
         # Check to see if the folder already exists, if not create it
@@ -130,8 +130,9 @@ class GFS_72hour_Maps:
         query.accept('netcdf4')
         
         print("-----------------------------------------\n"\
-              +"Sit back....\n"\
+              +"Sit back....\nOr get your coffee....\nOr do a Sudoku....\n"\
               +"-----------------------------------------\n")
+        print("qeueing data...\n") 
         #query.variables(str(self.query_list)).add_lonlat(True)
         for i in self.query_list:
             query.variables(i) 
@@ -158,36 +159,67 @@ class GFS_72hour_Maps:
         
     
     
-        
-     
-    def get_time_string(self,data,time_index):
-        # File and Title Times
-        #---------------------------------------------------------------------------------------------------
-        
+    def get_data_times(self,data):
+        '''
+        Get all the forecast times in the data as strings
+        -------------------------------------------------
+        '''
         # Get time into a datetime object
         time_var = data.variables[self.find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
         time_var = num2date(time_var[:], time_var.units).tolist()
-        time_strings = [t.strftime('%m/%d %H:%M') for t in time_var]
+        self.time_strings = [t.strftime('%m/%d %H:%M') for t in time_var]
             
         time_var = data.variables[self.find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
-        time_final = num2date(time_var[:].squeeze(), time_var.units)
+        self.time_final = num2date(time_var[:].squeeze(), time_var.units)
+        
+        return self.time_strings,self.time_final
+        
+    def get_time_string(self,data,time_index):
+        '''
+        Grab string of date and time for one specific time step in data.
+        ie time_index=5 gets the sixth time of data. 
+        
+        Arguments
+        ---------
+        data: full dataset
+        time_index: desired time step in dataset
+        
+        Returns
+        -------
+        time_index: time index
+        time: string time
+        file_time: filename time
+        forecast_date: forecast date
+        forecast_hour: forecast hour
+        init_date: initialization date
+        init_hour: initialization hour
+        
+        '''
+        # File and Title Times
+        #---------------------------------------------------------------------------------------------------
         
         # Time index for data variables
-        time = time_strings[time_index]
-        print(time)
+        time = self.time_strings[time_index]
+        #print(f"string time: {time}")
     
         # Set string for saved image file name
-        file_time = str(time_final[0]).replace("-","_").replace(" ","_").replace(":","")[:-2]+"Z"
+        file_time = str(self.time_final[0]).replace("-","_").replace(" ","_").replace(":","")[:-2]+"Z"
     
         # Set forecast date and hour  
-        forecast_date = "{}".format(self.now.year)+'-'+time_strings[time_index].replace("/","-")[:-5]
-        forecast_hour = time_strings[time_index][-5:]+"Z"
+        forecast_date = "{}".format(self.now.year)+'-'+self.time_strings[time_index].replace("/","-")[:-5]
+        forecast_hour = self.time_strings[time_index][-5:]+"Z"
     
         # Set initialization date and hour 
-        init_date = "{}".format(self.now.year)+'-'+time_strings[0].replace("/","-")[:-5]
-        init_hour = time_strings[0].replace("/","-")[-5:]+"Z"
-        
-        return time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings
+        init_date = "{}".format(self.now.year)+'-'+self.time_strings[0].replace("/","-")[:-5]
+        init_hour = self.time_strings[0].replace("/","-")[-5:]+"Z"
+        print(f"time index: {time_index},\n\
+            string time: {time},\n\
+            filename time: {file_time},\n\
+            forecast date: {forecast_date},\n\
+            forecast hour: {forecast_hour},\n\
+            initialization date: {init_date},\n\
+            initialization hour: {init_hour}\n")
+        return time,file_time,forecast_date,forecast_hour,init_date,init_hour
     
     
     

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on Thu Oct  1 18:00:30 2020
@@ -9,13 +9,6 @@ Created on Thu Oct  1 18:00:30 2020
 # System Tools
 import os
 
-# MetPy
-from metpy.units import units
-
-# Numerical and Scientific Libraries
-import numpy as np
-from scipy.ndimage import gaussian_filter
-
 from gfs_72h_quick import GFS_72hour_Maps
 
 gfs = GFS_72hour_Maps()
@@ -23,6 +16,8 @@ gfs = GFS_72hour_Maps()
 data = gfs.get_data()
 
 fig,ax = gfs.make_map()
+
+gfs.g
 
 '''
 vort = data.variables[gfs.vort_name][:]
@@ -61,9 +56,15 @@ thickness_1000_500 = gaussian_filter(hght_500 - hght_1000, sigma=3.0)
 #im_save_path = GFS_72hour_Maps.
 #get_time_string = gfs.get_time_string(data,5)
 
-     
-os.chdir("map-scripts/")
+print("changing dirs for HiLo script...\n")     
+os.chdir("/Users/chowdahead/Documents/gfs-72hour/map-scripts")
+print(os.getcwd())
+print(os.listdir())
+print("importing HiLo script...\n") 
+import sys
+sys.path.append('/Users/chowdahead/Documents/gfs-72hour/map-scripts')
 import HiLo_map as hilo
+print("import done...\ntrying map plot function...\n")
 hilo.HiLo_thickness_map(data,
                        5,
                        fig,
