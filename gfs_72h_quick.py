@@ -132,17 +132,17 @@ class GFS_72hour_Maps:
         print("-----------------------------------------\n"\
               +"Sit back....\nOr get your coffee....\nOr do a Sudoku....\n"\
               +"-----------------------------------------\n")
-        print("qeueing data...\n") 
+        print("qeueing data...") 
         #query.variables(str(self.query_list)).add_lonlat(True)
         for i in self.query_list:
             query.variables(i) 
         #query.variables(vort_name,hgt_name,pv_press_name,mslp_name,upflux_rad_name,u_name,v_name,
         #               u_src_name,v_src_name,sfc_gust_name).add_lonlat(True)
-        print("\ndone qeueing data...\n\ngrabbing data...\n")  
+        print("\ndone qeueing data.\n\ngrabbing data...\n")  
             
         # Request data for the variables you want to use
         self.data = ncss.get_data(query)
-        print("done grabbing data!!\n")        
+        print("done grabbing data!!\n-_-_-_-_-_-_-_-_-_-_-_")        
         return self.data
     
     

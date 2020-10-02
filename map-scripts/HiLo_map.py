@@ -42,6 +42,7 @@ def HiLo_thickness_map(data,
     from gfs_72h_quick import GFS_72hour_Maps
     
     gfs = GFS_72hour_Maps()
+    time_strings,_ = gfs.get_data_times(data)
     title_font = gfs.title_font
     u_src_name = gfs.u_src_name
     v_src_name = gfs.v_src_name
@@ -63,6 +64,7 @@ def HiLo_thickness_map(data,
     #---------------------------------------------------------------------------------------------------
     time,file_time,forecast_date,forecast_hour,init_date,init_hour = gfs.get_time_string(data,time_index)
     #time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings = get_time_string()
+    
     
     ax.set_title('GFS 0.5$^{o}$\nMSLP (mb) and 2m Winds (m/s)', 
     size=10, loc='left',fontdict=title_font)

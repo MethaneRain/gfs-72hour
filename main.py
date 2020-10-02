@@ -17,7 +17,7 @@ data = gfs.get_data()
 
 fig,ax = gfs.make_map()
 
-gfs.g
+#gfs.g
 
 '''
 vort = data.variables[gfs.vort_name][:]
@@ -56,7 +56,7 @@ thickness_1000_500 = gaussian_filter(hght_500 - hght_1000, sigma=3.0)
 #im_save_path = GFS_72hour_Maps.
 #get_time_string = gfs.get_time_string(data,5)
 
-print("changing dirs for HiLo script...\n")     
+print("\n\nchanging dirs for HiLo script...\n")     
 os.chdir("/Users/chowdahead/Documents/gfs-72hour/map-scripts")
 print(os.getcwd())
 print(os.listdir())
