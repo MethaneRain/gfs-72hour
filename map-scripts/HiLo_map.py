@@ -42,7 +42,7 @@ def HiLo_thickness_map(data,
     from gfs_72h_quick import GFS_72hour_Maps
     
     gfs = GFS_72hour_Maps()
-    time_strings,_ = gfs.get_data_times(data)
+    time_strings,_,time_var = gfs.get_data_times(data)
     title_font = gfs.title_font
     u_src_name = gfs.u_src_name
     v_src_name = gfs.v_src_name
@@ -130,13 +130,15 @@ def HiLo_thickness_map(data,
         os.makedirs(HILO)
     
     import datetime_diff as dt
-    dt.dt_diff.datetime_difference()    
+    time_index_forecast,_,_ = dt.datetime_difference(time_var[time_index],gfs.start)    
     
-    time_index *= 3
-    if time_index < 10:
-        times = f"0{time_index}"
+    #time_index *= 3
+    if time_index_forecast < 10:
+        times = f"00{time_index_forecast}"
+    if 10 < int(time_index_forecast) < 100:
+        times = f"0{time_index_forecast}"
     else:
-        times = f"{time_index}"
+        times = f"{time_index_forecast}"
     
     
     if thickness_plot == True:

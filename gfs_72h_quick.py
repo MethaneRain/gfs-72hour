@@ -75,7 +75,7 @@ class GFS_72hour_Maps:
 
 
         self.now = datetime.utcnow()
-        self.im_save_path =f"{self.now.year}/{self.now.month}_{self.now.day}/"
+        self.im_save_path =f"{self.now.year}/{self.now.month:02d}_{self.now.day:02d}/"
         print(self.im_save_path)
             
         # Check to see if the folder already exists, if not create it
@@ -115,9 +115,10 @@ class GFS_72hour_Maps:
     
     def get_data(self):
         # Request the GFS data from the thredds server
-        gfs_cat = TDSCatalog('https://thredds.ucar.edu/thredds/catalog/grib/NCEP/GFS/Global_0p25deg/catalog.xml')
-            
-        dataset = list(gfs_cat.datasets.values())[1]
+        gfs_url = f"https://thredds.ucar.edu/thredds/catalog/grib/NCEP/GFS/Global_0p25deg/GFS_Global_0p25deg_{self.now.year}{self.now.month:02d}{self.now.day:02d}_0000.grib2/catalog.xml"
+        gfs_cat = TDSCatalog(gfs_url)
+        #https://thredds.ucar.edu/thredds/catalog/grib/NCEP/GFS/Global_0p25deg/catalog.xml'    
+        dataset = list(gfs_cat.datasets.values())[0]
         #print(dataset.access_urls)
             
         # Create NCSS object to access the NetcdfSubset
