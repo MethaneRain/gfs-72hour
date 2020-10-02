@@ -103,8 +103,9 @@ class GFS_72hour_Maps:
         self.upflux_rad_name = "Upward_Long-Wave_Radp_Flux_atmosphere_top_Mixed_intervals_Average"
         self.u_name = 'u-component_of_wind_isobaric'
         self.v_name = 'v-component_of_wind_isobaric'
+        self.precip_tot_name = 'Total_precipitation_surface_Mixed_intervals_Accumulation'
         
-        self.query_list = [self.mslp_name,self.u_src_name,self.v_src_name]
+        self.query_list = [self.mslp_name,self.u_src_name,self.v_src_name,self.precip_tot_name]
         
         # Set the title font 
         self.title_font = {'family': 'serif',
