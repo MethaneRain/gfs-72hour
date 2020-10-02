@@ -15,7 +15,9 @@ gfs = GFS_72hour_Maps()
 
 data = gfs.get_data()
 
-fig,ax = gfs.make_map()
+_,_,time_strings = gfs.get_data_times(data)
+
+#fig,ax = gfs.make_map()
 
 #gfs.g
 
@@ -65,8 +67,7 @@ import sys
 sys.path.append('/Users/chowdahead/Documents/gfs-72hour/map-scripts')
 import HiLo_map as hilo
 print("import done...\ntrying map plot function...\n")
-hilo.HiLo_thickness_map(data,
-                       5,
-                       fig,
-                       ax)
-fig
+for i in range(0,len(time_strings)): #len(time_strings)+1
+    hilo.HiLo_thickness_map(data,
+                           i)
+

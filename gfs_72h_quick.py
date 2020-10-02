@@ -75,7 +75,7 @@ class GFS_72hour_Maps:
 
 
         self.now = datetime.utcnow()
-        self.im_save_path =f"{self.now.year}/{self.now.month:02d}_{self.now.day:02d}/"
+        self.im_save_path =f"/Users/chowdahead/Desktop/{self.now.year}/{self.now.month:02d}_{self.now.day:02d}/"
         print(self.im_save_path)
             
         # Check to see if the folder already exists, if not create it
@@ -90,8 +90,8 @@ class GFS_72hour_Maps:
         self.start = datetime(self.now.year,self.now.month,self.now.day,0)
         # define time range you want the data for
         print(self.start)
-        delta_t = 72
-        self.end = self.start + timedelta(hours=delta_t)
+        self.delta_t = 72
+        self.end = self.start + timedelta(hours=self.delta_t)
         self.extent = [-130,-60,20,60]
         self.vort_name = "Absolute_vorticity_isobaric"
         self.hgt_name = "Geopotential_height_isobaric"

@@ -9,9 +9,7 @@ Created on Thu Oct  1 00:30:10 2020
 
 
 def HiLo_thickness_map(data,
-                       time_index,
-                       fig,
-                       ax):
+                       time_index):
     '''
     Method to plot the 500mb heights and absolute vorticity
     -------------------------------------------------------
@@ -42,12 +40,16 @@ def HiLo_thickness_map(data,
     from gfs_72h_quick import GFS_72hour_Maps
     
     gfs = GFS_72hour_Maps()
+    
+    fig,ax = gfs.make_map()
+    
     time_strings,_,time_var = gfs.get_data_times(data)
     title_font = gfs.title_font
     u_src_name = gfs.u_src_name
     v_src_name = gfs.v_src_name
     mslp_name = gfs.mslp_name
     im_save_path = gfs.im_save_path
+    print(im_save_path)
     
     print(list(data.variables))
     lons = data.variables["lon"][:]
@@ -60,6 +62,21 @@ def HiLo_thickness_map(data,
     
     #fig,ax = make_map()
     
+    # Set forecast hour string for filename and map title
+    #--------------------------------------------------------------------------------------------------- 
+    import datetime_diff as dt
+    time_index_forecast,_,_ = dt.datetime_difference(gfs.start,time_var[time_index])    
+    print(time_index_forecast,type(time_index_forecast))
+    #time_index *= 3
+    print(time_index_forecast < 10)
+    if time_index_forecast < 10:
+        times = f"00{time_index_forecast}"
+    if 10 < time_index_forecast < 100:
+        times = f"0{time_index_forecast}"
+    if time_index_forecast > 100:
+        times = f"{time_index_forecast}"
+    
+    
     # Plot Title
     #---------------------------------------------------------------------------------------------------
     time,file_time,forecast_date,forecast_hour,init_date,init_hour = gfs.get_time_string(data,time_index)
@@ -69,7 +86,7 @@ def HiLo_thickness_map(data,
     ax.set_title('GFS 0.5$^{o}$\nMSLP (mb) and 2m Winds (m/s)', 
     size=10, loc='left',fontdict=title_font)
     
-    ax.set_title(f"Init Hour: {init_date} {init_hour}\nForecast Hour: {forecast_date} {forecast_hour}",
+    ax.set_title(f"Init Hour: {init_date} {init_hour}\nForecast Hour F{times}: {forecast_date} {forecast_hour}",
     size=10, loc='right',fontdict=title_font)
         
     ax.stock_img()
@@ -129,18 +146,9 @@ def HiLo_thickness_map(data,
     if not os.path.isdir(HILO):
         os.makedirs(HILO)
     
-    import datetime_diff as dt
-    time_index_forecast,_,_ = dt.datetime_difference(time_var[time_index],gfs.start)    
-    
-    #time_index *= 3
-    if time_index_forecast < 10:
-        times = f"00{time_index_forecast}"
-    if 10 < int(time_index_forecast) < 100:
-        times = f"0{time_index_forecast}"
-    else:
-        times = f"{time_index_forecast}"
     
     
+    print(times)
     if thickness_plot == True:
         '''
         # Grab pressure level data
@@ -168,6 +176,6 @@ def HiLo_thickness_map(data,
     #outfile = f"{HILO}GFS_0p5_HiLo_thickness_{file_time}_F{times}.png"
     fig.savefig(outfile,bbox_inches='tight',dpi=120)
     plt.close(fig)
-    print(time,file_time,forecast_date,forecast_hour,init_date,init_hour)
-    
+    #print(time,file_time,forecast_date,forecast_hour,init_date,init_hour)
+    #fig.clear()
     return file_time
