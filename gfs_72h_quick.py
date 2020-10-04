@@ -43,16 +43,6 @@ import warnings
 warnings.filterwarnings('ignore')
             
 
-vort_name = "Absolute_vorticity_isobaric"
-hgt_name = "Geopotential_height_isobaric"
-u_src_name = "u-component_of_wind_height_above_ground"
-v_src_name = "v-component_of_wind_height_above_ground"
-sfc_gust_name = 'Wind_speed_gust_surface'
-pv_press_name = "Pressure_potential_vorticity_surface"
-mslp_name = "MSLP_Eta_model_reduction_msl"
-upflux_rad_name = "Upward_Long-Wave_Radp_Flux_atmosphere_top_Mixed_intervals_Average"
-u_name = 'u-component_of_wind_isobaric'
-v_name = 'v-component_of_wind_isobaric'
 class GFS_72hour_Maps:
     '''
     Class to collect all my 72-hour GFS forecast maps. 
@@ -85,9 +75,9 @@ class GFS_72hour_Maps:
         # Uncomment if you want to automatically change to the map folder    
         #os.chdir(im_save_path)
         
-        # get current date and time
-        #now = forecast_times[0]
+        # get current date and 00Z 
         self.start = datetime(self.now.year,self.now.month,self.now.day,0)
+        
         # define time range you want the data for
         print(self.start)
         self.delta_t = 72
@@ -144,7 +134,7 @@ class GFS_72hour_Maps:
             
         # Request data for the variables you want to use
         self.data = ncss.get_data(query)
-        print("done grabbing data!!\n-_-_-_-_-_-_-_-_-_-_-_")        
+        print("done grabbing data!!\n-_-_-_-_-_-_-_-_-_-_-_\n")        
         return self.data
     
     
@@ -168,15 +158,15 @@ class GFS_72hour_Maps:
         '''
         # Get time into a datetime object
         time_var = data.variables[self.find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
-        self.time_var = num2date(time_var[:], time_var.units).tolist()
-        self.time_strings = [t.strftime('%m/%d %H:%M') for t in self.time_var]
+        time_var = num2date(time_var[:], time_var.units).tolist()
+        time_strings = [t.strftime('%m/%d %H:%M') for t in self.time_var]
             
         time_var = data.variables[self.find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
-        self.time_final = num2date(time_var[:].squeeze(), time_var.units)
+        time_final = num2date(time_var[:].squeeze(), time_var.units)
         
-        return self.time_strings,self.time_final,self.time_var
+        return time_strings,time_final,time_var
         
-    def get_time_string(self,data,time_index):
+    def get_time_string(self,data,time_index,time_strings,time_final):
         '''
         Grab string of date and time for one specific time step in data.
         ie time_index=5 gets the sixth time of data. 
@@ -185,11 +175,16 @@ class GFS_72hour_Maps:
         ---------
         data: full dataset
         time_index: desired time step in dataset
+        time_strings: list of requested dates in human readable string format
+        time_final: list of requested datetimes
+        
         
         Returns
         -------
-        time_index: time index
-        time: string time
+        All returns are based off the requested single date index
+        
+        time_index: supplied time index
+        time: string time 
         file_time: filename time
         forecast_date: forecast date
         forecast_hour: forecast hour
@@ -201,19 +196,19 @@ class GFS_72hour_Maps:
         #---------------------------------------------------------------------------------------------------
         
         # Time index for data variables
-        time = self.time_strings[time_index]
+        time = time_strings[time_index]
         #print(f"string time: {time}")
     
         # Set string for saved image file name
-        file_time = str(self.time_final[0]).replace("-","_").replace(" ","_").replace(":","")[:-2]+"Z"
+        file_time = str(time_final[0]).replace("-","_").replace(" ","_").replace(":","")[:-2]+"Z"
     
         # Set forecast date and hour  
-        forecast_date = "{}".format(self.now.year)+'-'+self.time_strings[time_index].replace("/","-")[:-5]
-        forecast_hour = self.time_strings[time_index][-5:]+"Z"
+        forecast_date = "{}".format(self.now.year)+'-'+time_strings[time_index].replace("/","-")[:-5]
+        forecast_hour = time_strings[time_index][-5:]+"Z"
     
         # Set initialization date and hour 
-        init_date = "{}".format(self.now.year)+'-'+self.time_strings[0].replace("/","-")[:-5]
-        init_hour = self.time_strings[0].replace("/","-")[-5:]+"Z"
+        init_date = "{}".format(self.now.year)+'-'+time_strings[0].replace("/","-")[:-5]
+        init_hour = time_strings[0].replace("/","-")[-5:]+"Z"
         print(f"time index: {time_index},\n\
             string time: {time},\n\
             filename time: {file_time},\n\
@@ -224,8 +219,6 @@ class GFS_72hour_Maps:
         return time,file_time,forecast_date,forecast_hour,init_date,init_hour
     
     
-    
-    @staticmethod
     def get_var_isobaric_num(data,var):
         '''
         thredds use different isobaric variable names depending on the variable,
@@ -239,7 +232,7 @@ class GFS_72hour_Maps:
             #print(iso[finder:finder+9])
             iso_num = iso[finder:finder+9]
         else:
-            print("no isobaricX varible name!")
+            print("no isobaricX variable name!")
         type(iso_num),iso_num
         return iso_num   
     
