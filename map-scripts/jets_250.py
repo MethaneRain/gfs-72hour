@@ -6,7 +6,7 @@ Created on Fri Oct  2 18:18:52 2020
 @author: Justin Richling
 """
     
-def jet250_map(data,time_index, time_strings,time_final):
+def jet250_map(data,time_index,time_strings,time_final):
     '''
     Method to plot the 250mb jets and 500mb heights
     -------------------------------------------------------
@@ -18,7 +18,6 @@ def jet250_map(data,time_index, time_strings,time_final):
         
     # Numerical and Scientific Libraries
     import numpy as np
-    from scipy.ndimage import gaussian_filter
     
     import matplotlib.pyplot as plt
     
@@ -28,9 +27,6 @@ def jet250_map(data,time_index, time_strings,time_final):
     #from HiLo import plot_maxmin_points as plot_maxmin_points
     
     from matplotlib import patheffects
-    
-    # MetPy
-    from metpy.units import units
     
      
     os.chdir("../")

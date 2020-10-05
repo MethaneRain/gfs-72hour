@@ -199,7 +199,7 @@ class GFS_72hour_Maps:
         time_strings = [t.strftime('%m/%d %H:%M') for t in time_datetimes]
             
         time_final = num2date(time_var[:].squeeze(), time_var.units)
-        return time_var,time_datetimes,time_strings,time_final
+        return time_var,time_strings,time_final
         
     def make_time_string(self,data,time_index,time_strings,time_final):
         '''

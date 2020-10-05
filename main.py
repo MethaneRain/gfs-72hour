@@ -15,7 +15,7 @@ gfs = GFS_72hour_Maps()
 
 data = gfs.get_data()
 
-time_var,time_datetimes,time_strings,time_final = gfs.get_data_times(data,gfs.u_name)
+_,time_strings,time_final = gfs.get_data_times(data,gfs.u_name)
 print(time_strings)
 
 
