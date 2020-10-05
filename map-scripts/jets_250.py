@@ -8,8 +8,7 @@ Created on Fri Oct  2 18:18:52 2020
     
 def jet250_map(data,
                        time_index,
-                       fig,
-                       ax):
+                       time_strings,time_final):
     '''
     Method to plot the 250mb jets and 500mb heights
     -------------------------------------------------------
@@ -40,7 +39,10 @@ def jet250_map(data,
     from gfs_72h_quick import GFS_72hour_Maps
     
     gfs = GFS_72hour_Maps()
-    time_strings,_ = gfs.get_data_times(data)
+    
+    fig,ax = gfs.make_map()
+    
+    time_strings,_,time_var,time_datetimes = gfs.get_data_times(data)
     title_font = gfs.title_font
     ref_cmap = "magma"
     
@@ -50,7 +52,9 @@ def jet250_map(data,
     hgt = data.variables[hgt_name][:]
     #u = data.variables[u_name][0] * units('m/s')
     #v = data.variables[v_name][0] * units('m/s')
-    lev_250 = np.where(data.variables['isobaric'][:] == 25000)[0][0]
+    
+    press_iso = gfs.get_var_isobaric_num(data,u_name)
+    lev_250 = np.where(data.variables[press_iso.replace(" ", "")][:] == 25000)[0][0]
     u_250 = data.variables[u_name][:, lev_250, :, :]
     v_250 = data.variables[v_name][:, lev_250, :, :]
 
@@ -69,12 +73,24 @@ def jet250_map(data,
         
     # Setup Figure
     #---------------------------------------------------------------------------------------------------    
+    
     # Plot Title
     #---------------------------------------------------------------------------------------------------
-    time,file_time,forecast_date,forecast_hour,init_date,init_hour = gfs.get_time_string(data,time_index)
-    #time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings = get_time_string()
+    time,file_time,forecast_date,forecast_hour,init_date,init_hour = gfs.get_time_string(data,time_index,
+                                                                                         time_strings,time_final)
+    
+    time_index_forecast,_,_ = gfs.datetime_difference(gfs.start,time_datetimes[time_index])    
+    print(time_index_forecast,type(time_index_forecast))
 
-
+    print(time_index_forecast < 10)
+    if time_index_forecast < 10:
+        times = f"00{time_index_forecast}"
+    if 10 < time_index_forecast < 100:
+        times = f"0{time_index_forecast}"
+    if time_index_forecast > 100:
+        times = f"{time_index_forecast}"
+    
+    
     # Plot Title
     #---------------------------------------------------------------------------------------------------
     ax.set_title('GFS 0.5$^{o}$\n500hPa Heights (m) and 250hPa Windspeed (m/s)', 
@@ -134,13 +150,7 @@ def jet250_map(data,
     WND = im_save_path+"GFS/Wind/"
     if not os.path.isdir(WND):
         os.makedirs(WND)
-        
-    time_index *= 3
-    if time_index < 10:
-        times = f"0{time_index}"
-    else:
-        times = f"{time_index}"
-        
+    
     outfile = f"{WND}GFS_0p5_WindSpeed_{file_time}_F{times}.png"
     fig.savefig(outfile,bbox_inches='tight',dpi=120)
     plt.close(fig)

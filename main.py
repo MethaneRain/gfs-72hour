@@ -15,7 +15,9 @@ gfs = GFS_72hour_Maps()
 
 data = gfs.get_data()
 
-_,_,time_strings = gfs.get_data_times(data)
+time_strings,time_final,time_var,time_datetimes = gfs.get_data_times(data)
+
+#time_strings,time_final,time_var = gfs.get_data_times(data)
 
 #fig,ax = gfs.make_map()
 
@@ -65,9 +67,16 @@ print(os.listdir())
 print("importing HiLo script...\n") 
 import sys
 sys.path.append('/Users/chowdahead/Documents/gfs-72hour/map-scripts')
+import jets_250 as jets
+print("import done...\ntrying map plot function...\n")
+for i in range(0,len(time_strings)): #len(time_strings)+1
+    jets.jet250_map(data,i,time_strings,time_final)
+    
+'''
 import HiLo_map as hilo
 print("import done...\ntrying map plot function...\n")
 for i in range(0,len(time_strings)): #len(time_strings)+1
     hilo.HiLo_thickness_map(data,
                            i)
+'''
 

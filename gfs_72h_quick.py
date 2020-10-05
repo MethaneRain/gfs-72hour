@@ -95,7 +95,8 @@ class GFS_72hour_Maps:
         self.v_name = 'v-component_of_wind_isobaric'
         self.precip_tot_name = 'Total_precipitation_surface_Mixed_intervals_Accumulation'
         
-        self.query_list = [self.mslp_name,self.u_src_name,self.v_src_name,self.precip_tot_name]
+        self.query_list = [self.mslp_name,self.u_src_name,self.v_src_name,self.precip_tot_name,
+                           self.hgt_name,self.u_name,self.v_name]
         
         # Set the title font 
         self.title_font = {'family': 'serif',
@@ -103,6 +104,23 @@ class GFS_72hour_Maps:
         'weight': 'bold',
         'size': 14,
         }
+    def datetime_difference(self,date1,date2):
+        '''
+        Find time differences between two datetime instances
+        ----------------------------------------------------
+        
+        Useful for finding FXXX number for file name and for title info for
+        forecasted hour
+        
+        '''    
+        diff = date2 - date1
+        
+        days, seconds = diff.days, diff.seconds
+        hours = days * 24 + seconds // 3600
+        minutes = (seconds % 3600) // 60
+        seconds = seconds % 60
+        
+        return hours,minutes,seconds
     
     def get_data(self):
         # Request the GFS data from the thredds server
@@ -158,13 +176,12 @@ class GFS_72hour_Maps:
         '''
         # Get time into a datetime object
         time_var = data.variables[self.find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
-        time_var = num2date(time_var[:], time_var.units).tolist()
-        time_strings = [t.strftime('%m/%d %H:%M') for t in self.time_var]
+        time_datetimes = num2date(time_var[:], time_var.units).tolist()
+        #print(time_datetimes)
+        time_strings = [t.strftime('%m/%d %H:%M') for t in time_datetimes]
             
-        time_var = data.variables[self.find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
         time_final = num2date(time_var[:].squeeze(), time_var.units)
-        
-        return time_strings,time_final,time_var
+        return time_var,time_strings,time_final,time_datetimes
         
     def get_time_string(self,data,time_index,time_strings,time_final):
         '''
@@ -219,7 +236,7 @@ class GFS_72hour_Maps:
         return time,file_time,forecast_date,forecast_hour,init_date,init_hour
     
     
-    def get_var_isobaric_num(data,var):
+    def get_var_isobaric_num(self,data,var):
         '''
         thredds use different isobaric variable names depending on the variable,
         ie, isobaric1, isobaric7, etc. Thus grab the isobaric number variable name

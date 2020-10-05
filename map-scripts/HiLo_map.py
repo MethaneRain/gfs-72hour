@@ -64,8 +64,8 @@ def HiLo_thickness_map(data,
     
     # Set forecast hour string for filename and map title
     #--------------------------------------------------------------------------------------------------- 
-    import datetime_diff as dt
-    time_index_forecast,_,_ = dt.datetime_difference(gfs.start,time_var[time_index])    
+    
+    time_index_forecast,_,_ = gfs.datetime_difference(gfs.start,time_var[time_index])    
     print(time_index_forecast,type(time_index_forecast))
     #time_index *= 3
     print(time_index_forecast < 10)
