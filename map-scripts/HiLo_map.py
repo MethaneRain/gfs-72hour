@@ -9,7 +9,9 @@ Created on Thu Oct  1 00:30:10 2020
 
 
 def HiLo_thickness_map(data,
-                       time_index):
+                       time_index,
+                       time_strings,time_final,
+                       time_var):
     '''
     Method to plot the 500mb heights and absolute vorticity
     -------------------------------------------------------
@@ -43,11 +45,13 @@ def HiLo_thickness_map(data,
     
     fig,ax = gfs.make_map()
     
-    time_strings,_,time_var = gfs.get_data_times(data)
     title_font = gfs.title_font
     u_src_name = gfs.u_src_name
     v_src_name = gfs.v_src_name
     mslp_name = gfs.mslp_name
+    
+    #time_strings,_,time_var = gfs.get_data_times(data,mslp_name)
+
     im_save_path = gfs.im_save_path
     print(im_save_path)
     
@@ -65,7 +69,7 @@ def HiLo_thickness_map(data,
     # Set forecast hour string for filename and map title
     #--------------------------------------------------------------------------------------------------- 
     
-    time_index_forecast,_,_ = gfs.datetime_difference(gfs.start,time_var[time_index])    
+    time_index_forecast,_,_ = gfs.datetime_difference(gfs.start,time_final[time_index])    
     print(time_index_forecast,type(time_index_forecast))
     #time_index *= 3
     print(time_index_forecast < 10)
@@ -79,7 +83,7 @@ def HiLo_thickness_map(data,
     
     # Plot Title
     #---------------------------------------------------------------------------------------------------
-    time,file_time,forecast_date,forecast_hour,init_date,init_hour = gfs.get_time_string(data,time_index)
+    time,file_time,forecast_date,forecast_hour,init_date,init_hour = gfs.make_time_string(data,time_index,time_strings,time_final)
     #time,file_time,forecast_date,forecast_hour,init_date,init_hour,time_strings = get_time_string()
     
     

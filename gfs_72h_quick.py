@@ -58,7 +58,9 @@ class GFS_72hour_Maps:
     * MSLP, Hi/Lows, and 1000-500mb Thickness
     * 500mb Heights and Absolute Vorticity
     * 
+    
     '''
+    
     def __init__(self):
         
         self.plotcrs = ccrs.LambertConformal()    
@@ -95,8 +97,10 @@ class GFS_72hour_Maps:
         self.v_name = 'v-component_of_wind_isobaric'
         self.precip_tot_name = 'Total_precipitation_surface_Mixed_intervals_Accumulation'
         
+        #self.query_list = [self.hgt_name,self.u_name,self.v_name]
+        
         self.query_list = [self.mslp_name,self.u_src_name,self.v_src_name,self.precip_tot_name,
-                           self.hgt_name,self.u_name,self.v_name]
+                          self.hgt_name,self.u_name,self.v_name]
         
         # Set the title font 
         self.title_font = {'family': 'serif',
@@ -169,21 +173,35 @@ class GFS_72hour_Maps:
         
     
     
-    def get_data_times(self,data):
+    def get_data_times(self,data,var):
+        #var=precip_total_name
         '''
         Get all the forecast times in the data as strings
         -------------------------------------------------
+        
+        Arguments
+        ---------
+        
+        
+        Returns
+        -------
+        time_var: netCDF variable of all the times in the given ncss variable in dataset
+        
+        time_datetimes: list of datetime objects from ncss variable 
+        
+        time_strings: list of converted datetime values to strings
+        * format %m/%d %H:%M
         '''
         # Get time into a datetime object
-        time_var = data.variables[self.find_time_var(data.variables["MSLP_Eta_model_reduction_msl"])]
+        time_var = data.variables[self.find_time_var(data.variables[var])]
         time_datetimes = num2date(time_var[:], time_var.units).tolist()
-        #print(time_datetimes)
+        print(type(time_datetimes),time_datetimes,"\n")
         time_strings = [t.strftime('%m/%d %H:%M') for t in time_datetimes]
             
         time_final = num2date(time_var[:].squeeze(), time_var.units)
-        return time_var,time_strings,time_final,time_datetimes
+        return time_var,time_datetimes,time_strings,time_final
         
-    def get_time_string(self,data,time_index,time_strings,time_final):
+    def make_time_string(self,data,time_index,time_strings,time_final):
         '''
         Grab string of date and time for one specific time step in data.
         ie time_index=5 gets the sixth time of data. 
@@ -215,17 +233,20 @@ class GFS_72hour_Maps:
         # Time index for data variables
         time = time_strings[time_index]
         #print(f"string time: {time}")
-    
+        
+        print(time_strings[time_index])
+        
         # Set string for saved image file name
         file_time = str(time_final[0]).replace("-","_").replace(" ","_").replace(":","")[:-2]+"Z"
     
         # Set forecast date and hour  
-        forecast_date = "{}".format(self.now.year)+'-'+time_strings[time_index].replace("/","-")[:-5]
-        forecast_hour = time_strings[time_index][-5:]+"Z"
+        forecast_date = "{}".format(self.now.year)+'-'+str(time_strings[time_index]).replace("/","-")[:-5]
+        forecast_hour = str(time_strings[time_index])[-5:]+"Z"
     
         # Set initialization date and hour 
-        init_date = "{}".format(self.now.year)+'-'+time_strings[0].replace("/","-")[:-5]
-        init_hour = time_strings[0].replace("/","-")[-5:]+"Z"
+        init_date = "{}".format(self.now.year)+'-'+str(time_strings[0]).replace("/","-")[:-5]
+        init_hour = str(time_strings[0]).replace("/","-")[-5:]+"Z"
+        
         print(f"time index: {time_index},\n\
             string time: {time},\n\
             filename time: {file_time},\n\

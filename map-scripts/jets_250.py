@@ -6,9 +6,7 @@ Created on Fri Oct  2 18:18:52 2020
 @author: Justin Richling
 """
     
-def jet250_map(data,
-                       time_index,
-                       time_strings,time_final):
+def jet250_map(data,time_index, time_strings,time_final,time_var):
     '''
     Method to plot the 250mb jets and 500mb heights
     -------------------------------------------------------
@@ -42,7 +40,7 @@ def jet250_map(data,
     
     fig,ax = gfs.make_map()
     
-    time_strings,_,time_var,time_datetimes = gfs.get_data_times(data)
+    #time_strings,_,time_var,time_datetimes = gfs.get_data_times(data,gfs.u_name)
     title_font = gfs.title_font
     ref_cmap = "magma"
     
@@ -76,10 +74,14 @@ def jet250_map(data,
     
     # Plot Title
     #---------------------------------------------------------------------------------------------------
-    time,file_time,forecast_date,forecast_hour,init_date,init_hour = gfs.get_time_string(data,time_index,
-                                                                                         time_strings,time_final)
+    #time,file_time,forecast_date,forecast_hour,init_date,init_hour = gfs.make_time_string(data,time_index,time_strings,time_final,time_datetimes)
+   # 
+   # 
     
-    time_index_forecast,_,_ = gfs.datetime_difference(gfs.start,time_datetimes[time_index])    
+    time,file_time,forecast_date,forecast_hour,init_date,init_hour = gfs.make_time_string(data,time_index,time_strings,time_final)
+    
+    
+    time_index_forecast,_,_ = gfs.datetime_difference(gfs.start,time_final[time_index])    
     print(time_index_forecast,type(time_index_forecast))
 
     print(time_index_forecast < 10)
@@ -96,7 +98,7 @@ def jet250_map(data,
     ax.set_title('GFS 0.5$^{o}$\n500hPa Heights (m) and 250hPa Windspeed (m/s)', 
     size=10, loc='left',fontdict=title_font)
 
-    ax.set_title(f"Init Hour: {init_date} {init_hour}\nForecast Hour: {forecast_date} {forecast_hour}",
+    ax.set_title(f"Init Hour: {init_date} {init_hour}\nForecast Hour F{times}: {forecast_date} {forecast_hour}",
     size=10, loc='right',fontdict=title_font)
         
     
@@ -110,7 +112,7 @@ def jet250_map(data,
     jet2_2 = np.ma.masked_where(jet>40,jet)
     
     
-    cs2 = ax.contourf(lons, lats, jet2,jet_levs,vmin=20,
+    cs2 = ax.contourf(lons, lats, jet2[time_index,:,:],jet_levs,vmin=20,
     transform=ccrs.PlateCarree(),cmap=ref_cmap)
     
     #cs2_2 = ax.contourf(lons, lats, jet2_2,jet_levs,
@@ -134,9 +136,9 @@ def jet250_map(data,
     #---------------------------------------------------------------------------------------------------
     # thredds variables use different isobaric variable names depending on the variable,
     # ie, isobaric1, isobaric7, etc. Thus grab what isobaric number is:
-    geo_hgt_iso_num = gfs.get_var_isobaric_num('Geopotential_height_isobaric')
-    hgt_500 = hgt[time_strings.index(time),data.variables[geo_hgt_iso_num][:].tolist().index(50000),:,:]
-        
+    geo_hgt_iso_num = gfs.get_var_isobaric_num(data,'Geopotential_height_isobaric')
+    hgt_500 = hgt[time_index,data.variables[geo_hgt_iso_num][:].tolist().index(50000),:,:]
+    #time_strings.index(time)    
     clev500 = np.arange(5200, 6000, 60)
     cs = ax.contour(lons, lats, hgt_500,clev500 ,colors='black', linewidths=2.0,
     linestyles='solid', transform=ccrs.PlateCarree())
@@ -152,5 +154,6 @@ def jet250_map(data,
         os.makedirs(WND)
     
     outfile = f"{WND}GFS_0p5_WindSpeed_{file_time}_F{times}.png"
+    print(outfile)
     fig.savefig(outfile,bbox_inches='tight',dpi=120)
     plt.close(fig)
