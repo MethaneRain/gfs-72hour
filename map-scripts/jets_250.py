@@ -6,7 +6,7 @@ Created on Fri Oct  2 18:18:52 2020
 @author: Justin Richling
 """
     
-def jet250_map(data,time_index, time_strings,time_final,time_var):
+def jet250_map(data,time_index, time_strings,time_final):
     '''
     Method to plot the 250mb jets and 500mb heights
     -------------------------------------------------------

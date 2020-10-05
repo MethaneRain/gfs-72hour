@@ -8,10 +8,7 @@ Created on Thu Oct  1 00:30:10 2020
 
 
 
-def HiLo_thickness_map(data,
-                       time_index,
-                       time_strings,time_final,
-                       time_var):
+def HiLo_thickness_map(data,time_index,time_strings,time_final):
     '''
     Method to plot the 500mb heights and absolute vorticity
     -------------------------------------------------------

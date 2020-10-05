@@ -29,12 +29,12 @@ sys.path.append('/Users/chowdahead/Documents/gfs-72hour/map-scripts')
 import jets_250 as jets
 print("import done...\ntrying map plot function...\n")
 for i in range(0,len(time_strings)): #len(time_strings)+1
-    jets.jet250_map(data,i,time_strings,time_final,time_var)
+    jets.jet250_map(data,i,time_strings,time_final)
 
 
 import HiLo_map as hilo
 print("import done...\ntrying map plot function...\n")
 for i in range(0,len(time_strings)): #len(time_strings)+1
-    hilo.HiLo_thickness_map(data,i,time_strings,time_final,time_var)
+    hilo.HiLo_thickness_map(data,i,time_strings,time_final)
 
 
